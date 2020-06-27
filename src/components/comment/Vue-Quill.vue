@@ -3,15 +3,18 @@
   <div class="vue-quill">
     <el-form ref="data" :model="data">
       <!-- 富文本编辑器 -->
+      <el-form-item>
+        <el-input placeholder="标题" v-model="data.title" clearable></el-input>
+      </el-form-item>
       <el-row v-loading="quillUpdateImg">
+        <!--           @focus="onEditorFocus($event)"
+          @blur="onEditorBlur($event)"
+        @change="onEditorChange($event)"-->
         <quillEditor
           class="quill-editor"
           ref="myQuillEditor"
           v-model="data.content"
           :options="editorOption"
-          @focus="onEditorFocus($event)"
-          @blur="onEditorBlur($event)"
-          @change="onEditorChange($event)"
         ></quillEditor>
       </el-row>
       <br />
@@ -21,7 +24,7 @@
       <el-form-item>
         <el-tag
           :key="tag"
-          v-for="tag in data.tag"
+          v-for="tag in data.listTag"
           closable
           :disable-transitions="false"
           @close="handleClose(tag)"
@@ -72,7 +75,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import toolbarOptions from "assets/js/QuillComment.js";
 import { getUUID } from "assets/js/QuillComment";
-import { getOSSPolicy } from "network/home";
+import { getOSSPolicy, getRelease } from "network/home";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -86,9 +89,11 @@ export default {
       inputVisible: false,
       inputValue: "",
       data: {
-        tag: [],
+        listTag: [],
         state: 1,
-        content: "1"
+        content: "",
+        title: "",
+        id: ""
       },
       editorOption: {
         placeholder: "",
@@ -126,14 +131,37 @@ export default {
   //方法集合
   methods: {
     // 富文本相关方法
-    onEditorFocus() {
-      console.log("获得焦点事件");
+    // onEditorFocus() {
+    //   console.log("获得焦点事件");
+    // },
+    // onEditorBlur() {
+    //   console.log("失去焦点事件");
+    // },
+    // onEditorChange() {
+    //   console.log("内容改变事件");
+    // },
+    // 编辑时, 读取数据
+    getReleaseData(id) {
+      getRelease(id).then(data => {
+        this.data.title = data.data.title;
+        this.data.state = data.data.state;
+        this.data.content = data.data.content;
+        this.data.listTag = data.data.ctag.split(";");
+        this.data.id = id;
+      });
     },
-    onEditorBlur() {
-      console.log("失去焦点事件");
+    // 清除数据
+    clearReleaseData() {
+      console.log("清除数据");
+      this.data.listTag = [];
+      this.data.state = 1;
+      this.data.content = "";
+      this.data.title = "";
+      this.data.id = "";
     },
-    onEditorChange() {
-      console.log("内容改变事件");
+    // 将数据传递给父组件, 由父组件提交数据
+    sumData() {
+      return this.data;
     },
     // 标签相关方法
     handleClose(tag) {
@@ -180,7 +208,7 @@ export default {
     uploadError(err) {
       this.$message.error("图片上传失败");
       this.quillUpdateImg = false;
-      console.log(err)
+      console.log(err);
     },
     beforeUpload() {
       this.quillUpdateImg = true;

@@ -118,8 +118,8 @@ export default {
       tableData: null,
       userForm: {
         content: "",
-        startDate: "",
-        endDate: ""
+        startDate: null,
+        endDate: null
       }
     };
   },

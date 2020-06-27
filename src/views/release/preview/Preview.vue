@@ -1,6 +1,35 @@
 <!-- release -->
 <template>
   <div class="preview" style="height: 100%; border-style: 50000px solid red;">
+    <el-form :inline="true" :model="lookUp" class="demo-form-inline">
+      <el-form-item label="内容">
+        <el-input v-model="lookUp.content" placeholder="内容"></el-input>
+      </el-form-item>
+      <el-form-item label="日期">
+        <el-col :span="10">
+          <el-date-picker
+            v-model="lookUp.startDate"
+            type="date"
+            placeholder="选择开始日期"
+            @change="contrastDate"
+          ></el-date-picker>
+        </el-col>
+        <el-col :span="2">-</el-col>
+        <el-col :span="10">
+          <el-date-picker
+            v-model="lookUp.endDate"
+            type="date"
+            placeholder="选择结束日期"
+            @change="contrastDate"
+          ></el-date-picker>
+        </el-col>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit">查询</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-button type="primary" @click="handleAdd">添加</el-button>
     <!-- 使用卡片会导致布局无法自适应, 这里改用表格展示 -->
     <el-table :data="data" style="width: 100%">
       <el-table-column label="文章ID" width="180">
@@ -20,7 +49,6 @@
           <el-tag v-for="tag in scope.row.listTag" :key="tag">{{ tag }}</el-tag>
         </template>
       </el-table-column>
-
       <el-table-column label="状态" width="180">
         <template slot-scope="scope">
           <el-switch
@@ -31,58 +59,25 @@
             inactive-text="公开"
             :active-value="1"
             :inactive-value="2"
+            @change="updateState(scope.row)"
           ></el-switch>
         </template>
       </el-table-column>
 
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <!--
-    <el-row :gutter="20">
-      <el-col v-for="(item, index) in data" :key="index" :span="3">
-        <el-card class="box-card" shadow="hover" @click.native="viewArticle(item.id)">
-          <div slot="header" class="clearfix">
-            <span>{{ item.title }}</span>
-          </div>
-          <div class="text item">
-            
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>-->
-    <!-- 对话框中暂时文章 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="dialogVisible"
-      width="1300px"
-      :before-close="handleClose"
-      :close-on-click-modal="false"
-    >
-      <el-divider></el-divider>
-      <div class="dialogClass">
-        <span v-html="content">{{ content }}</span>
-      </div>
-      <el-divider></el-divider>
-      <span>
-        <el-tag v-for="tag in ctag" :key="tag">{{ tag }}</el-tag>
-      </span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="modifyRelease(cid)" type="danger">编 辑</el-button>
-        <el-button @click="clearData" type="primary">关 闭</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import { getReleaseTable, getRelease } from "network/home";
+import { getReleaseTable, updataState } from "network/home";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -92,18 +87,19 @@ export default {
     //这里存放数据
     return {
       dialogVisible: false,
-      title: "",
-      content: "",
-      ctag: [],
-      cid: 0,
       data: [
         {
           listTag: [],
           title: "",
-          state: 0,
+          state: 1,
           Id: 0
         }
-      ]
+      ],
+      lookUp: {
+        content: "",
+        startDate: null,
+        endDate: null
+      }
     };
   },
   //监听属性 类似于data概念
@@ -112,56 +108,63 @@ export default {
   watch: {},
   //方法集合
   methods: {
-    // subData() {
-    //   this.$refs.quill.subData(this.value);
-    // },
-    // updateData() {
-    //   this.$refs.quill.updateData(this.value);
-    // },
-    // 查询所有的文章的标题和标签
-    getReleases() {
-      getReleaseTable().then(data => {
-        console.log("表格内容: ", data.data);
+    // 查询所有的文章放入表格中
+    getReleases(content) {
+      console.log("查找数据: ", content);
+      getReleaseTable(content).then(data => {
+        console.log("查找数据: ", data.data)
         this.data = data.data;
       });
     },
-    // 通过文章id查询文章内容
-    viewArticle(id) {
-      this.dialogVisible = true;
-      getRelease(id).then(data => {
-        this.title = data.data.title;
-        this.content = data.data.content;
-        this.ctag = data.data.ctag.split(";");
-        this.cid = data.data.id;
+    // 添加文章
+    handleAdd() {
+      this.$emit("addRelease");
+    },
+    // 编辑
+    handleEdit(row) {
+      // 这里调用父组件组件, 并将id传递给父组件
+      this.$emit("editRelease", row.id);
+    },
+    // 这里对父组件统一处理??
+    // 删除
+    handleDelete(row) {
+      console.log(row);
+    },
+    // 改变状态
+    updateState(row) {
+      updataState({
+        id: row.id,
+        state: row.state
+      }).then(res => {
+        if (res.data > 0) {
+          this.$message({
+            message: "状态修改成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("状态修改失败");
+        }
       });
     },
-    // 关闭对话框并清空内容
-    handleClose(done) {
-      done();
-      this.clearData();
+    // 查找数据
+    onSubmit() {
+      this.getReleases(this.lookUp);
+      // 调用子组件的方法进行数据查询
     },
-    // 修改文章
-    modifyRelease(id) {
-      this.$router.push(`/release/${id}`).catch(err => err);
-    },
-    // 关闭时清空数据
-    clearData() {
-      this.dialogVisible = false;
-      this.title = "";
-      this.ctag = [];
-      this.cid = 0;
-      this.content = "";
-    },
-    handleEdit(index, row) {
-      console.log(index, row);
-    },
-    handleDelete(index, row) {
-      console.log(index, row);
+    // 对比结束时间是否早于开始时间
+    contrastDate() {
+      if (this.lookUp.startDate != "" && this.lookUp.endDate != "") {
+        if (this.lookUp.startDate > this.lookUp.endDate) {
+          this.$message.error("结束时间不能早于开始时间");
+          this.lookUp.startDate = "";
+          this.lookUp.endDate = "";
+        }
+      }
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getReleases();
+    this.getReleases(this.lookUp);
   },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
