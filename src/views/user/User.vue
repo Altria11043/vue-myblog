@@ -66,6 +66,7 @@
         <el-table-column label="状态" width="90">
           <template slot-scope="scope">
             <el-switch
+              v-if="scope.row.id !== 1"
               v-model="scope.row.status"
               active-color="#13ce66"
               inactive-color="#ff4949"
@@ -76,18 +77,13 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if="scope.row.id !== 1">
             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
-              v-if="scope.row.id !== 1"
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-            >删除</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <updateUserDialog ref="updateUserDialog" />
+      <updateUserDialog ref="updateUserDialog" @getUserLists="getUserLists" />
       <!-- @refreshDataList="getUserLists" -->
       <addUserDialog ref="addUserDialog" />
     </Container>
@@ -97,9 +93,9 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import { getUserList, delectByid } from "network/home";
 import updateUserDialog from "views/user/UpdateUserDialog";
 import addUserDialog from "views/user/AddUserDialog";
+import { getUserList } from "network/api";
 
 import Container from "components/comment/container";
 
@@ -133,24 +129,28 @@ export default {
     handleEdit(index, row) {
       this.$refs.updateUserDialog.getUser(row.id);
     },
-    handleDelete(index, row) {
+    handleDelete() {
       this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
       })
         .then(() => {
-          delectByid(row.id).then(data => {
-            if (data.data === 1) {
-              this.$message({
-                message: "删除成功",
-                type: "success"
-              });
-              this.getUserLists();
-            } else {
-              this.$message.error("添加失败");
-            }
+          this.$message({
+            message: "功能并未实现",
+            type: "success"
           });
+          // delectByid(row.id).then(data => {
+          //   if (data.data === 1) {
+          //     this.$message({
+          //       message: "删除成功",
+          //       type: "success"
+          //     });
+          //     this.getUserLists();
+          //   } else {
+          //     this.$message.error("添加失败");
+          //   }
+          // });
         })
         .catch(() => {
           this.$message({

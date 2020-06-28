@@ -75,7 +75,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import toolbarOptions from "assets/js/QuillComment.js";
 import { getUUID } from "assets/js/QuillComment";
-import { getOSSPolicy, getRelease } from "network/home";
+import { getOSSPolicy, getRelease } from "network/api";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -142,7 +142,8 @@ export default {
     // },
     // 编辑时, 读取数据
     getReleaseData(id) {
-      getRelease(id).then(data => {
+      let d = {id}
+      getRelease(d).then(data => {
         this.data.title = data.data.title;
         this.data.state = data.data.state;
         this.data.content = data.data.content;
@@ -152,7 +153,6 @@ export default {
     },
     // 清除数据
     clearReleaseData() {
-      console.log("清除数据");
       this.data.listTag = [];
       this.data.state = 1;
       this.data.content = "";
@@ -165,7 +165,7 @@ export default {
     },
     // 标签相关方法
     handleClose(tag) {
-      this.data.tag.splice(this.data.tag.indexOf(tag), 1);
+      this.data.listTag.splice(this.data.listTag.indexOf(tag), 1);
     },
     showInput() {
       this.inputVisible = true;
@@ -176,7 +176,7 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
-        this.data.tag.push(inputValue);
+        this.data.listTag.push(inputValue);
       }
       this.inputVisible = false;
       this.inputValue = "";

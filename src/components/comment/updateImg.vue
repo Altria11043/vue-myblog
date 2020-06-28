@@ -12,6 +12,7 @@
       :on-remove="handleRemove"
       :on-success="handleUploadSuccess"
       :on-preview="handlePreview"
+      :on-error="uploadError"
     >
       <img v-if="image" :src="image" class="avatar" />
       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -24,7 +25,7 @@
   </div>
 </template>
 <script>
-import { getOSSPolicy } from "network/home";
+import { getOSSPolicy } from "network/api";
 import { getUUID } from "assets/js/QuillComment";
 
 export default {
@@ -119,9 +120,14 @@ export default {
           this.dataObj.key.replace("${filename}", file.name)
       });
       this.emitInput(this.fileList[0].url);
-      this.image = this.fileList[0].url
-      console.log(this.image)
+      this.image = this.fileList[0].url;
+      console.log(this.image);
     },
+    uploadError(err) {
+      this.$message.error("图片上传失败");
+      this.quillUpdateImg = false;
+      console.log(err);
+    }
     // getUpdateImgUrl() {
     //   return this.image;
     // }
@@ -142,13 +148,13 @@ export default {
   height: 178px;
   display: block;
 }
-.avatar-uploader .el-upload:hover{
+.avatar-uploader .el-upload:hover {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  border-color: #409EFF;
+  border-color: #409eff;
 }
 </style>
 

@@ -7,6 +7,8 @@ const Home = () => import('views/home/Home')
 const User = () => import('views/user/User')
 const Release = () => import('views/release/Release')
 const UpdateImg = () => import('components/comment/updateImg')
+const Index = () => import('views/homePage/index.vue')
+const Game = () => import('views/game/Game.vue')
 
 Vue.use(VueRouter)
 
@@ -49,6 +51,20 @@ const routes = [
     meta: {
       title: '个人博客后台管理-图片上传'
     }
+  },
+  {
+    path: '/game',
+    component: Game,
+    meta: {
+      title: '个人博客后台管理-游戏'
+    }
+  },
+  {
+    path: '/index',
+    component: Index,
+    meta: {
+      title: '个人网站'
+    }
   }
 ]
 
@@ -59,7 +75,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.matched[0].meta.title
-  if (to.path == "/login") {
+  if (to.path == "/login" || to.path == "/index") {
     next()
   }else {
     if (sessionStorage.getItem('user') === "SUCCESS") {

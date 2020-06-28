@@ -1,34 +1,21 @@
-<!-- 侧边容器aside -->
+<!-- 游戏 -->
 <template>
-  <div class="container" style="height: 100%">
-    <el-container style="height: 100%">
-      <BAside name="b_aside"></BAside>
-      <el-container>
-        <el-header>
-          <Top></Top>
-        </el-header>
-        <el-main>
-          <slot></slot>
-        </el-main>
-        <el-footer>页脚</el-footer>
-      </el-container>
-    </el-container>
+  <div class="game" style="height: 100%">
+    <Container>
+      <h1>游戏</h1>
+    </Container>
   </div>
 </template>
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import { getSession } from "network/api";
-import Top from "components/comment/top";
-import BAside from "components/content/b_aside";
+import Container from "components/comment/container";
+
 export default {
   //import引入的组件需要注入到对象中才能使用
-  name: "container",
-  components: {
-    Top,
-    BAside
-  },
+  name: "game",
+  components: { Container },
   data() {
     //这里存放数据
     return {};
@@ -40,16 +27,7 @@ export default {
   //方法集合
   methods: {},
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {
-    getSession().then(data => {
-      if (!data.data) {
-        sessionStorage.clear();
-        this.$router.push("/");
-      } else {
-        sessionStorage.setItem('user', "SUCCESS")
-      }
-    });
-  },
+  created() {},
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -61,21 +39,5 @@ export default {
   activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
-<style>
-.el-header,
-.el-footer {
-  background-color: #b3c0d1;
-  color: #333;
-  line-height: 60px;
-  font-size: 12px;
-}
-.el-header {
-  text-align: right;
-}
-.el-footer {
-  text-align: center;
-}
-.el-container {
-  border: 2px solid #eee;
-}
+<style scoped>
 </style>

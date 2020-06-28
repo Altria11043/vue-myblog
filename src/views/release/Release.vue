@@ -15,7 +15,7 @@
         :close-on-press-escape="false"
         lock-scroll
       >
-        <addOrEditRelease ref="addOrEditRelease" @addOrEditRelease="close"></addOrEditRelease>
+        <addOrEditRelease ref="addOrEditRelease" @addOrEditRelease="close" @updateDate="updateDate"></addOrEditRelease>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="subData">提交</el-button>
           <el-button @click="handleClose">取 消</el-button>
@@ -60,13 +60,11 @@ export default {
     },
     close() {
       // 关闭时清理富文本中的数据
-      console.log("马上关闭");
       this.dialogVisible = false;
       this.$refs.addOrEditRelease.clearData();
     },
     // 提交数据
     subData() {
-      // 这里要判断是新增还是编辑
       this.$refs.addOrEditRelease.sumData();
     },
     // 添加文章
@@ -83,6 +81,10 @@ export default {
       setTimeout(() => {
         this.$refs.addOrEditRelease.editRelease(id);
       }, 10);
+    },
+    // 更新数据
+    updateDate() {
+      this.$refs.preview.getReleases();
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）

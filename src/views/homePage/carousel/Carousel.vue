@@ -1,34 +1,22 @@
-<!-- 侧边容器aside -->
+<!-- carousel走马灯 -->
 <template>
-  <div class="container" style="height: 100%">
-    <el-container style="height: 100%">
-      <BAside name="b_aside"></BAside>
-      <el-container>
-        <el-header>
-          <Top></Top>
-        </el-header>
-        <el-main>
-          <slot></slot>
-        </el-main>
-        <el-footer>页脚</el-footer>
-      </el-container>
-    </el-container>
+  <div class="carousel">
+    <el-carousel height="305px">
+      <el-carousel-item v-for="item in 4" :key="item">
+        <h3 class="small">{{ item }}</h3>
+      </el-carousel-item>
+    </el-carousel>
   </div>
 </template>
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import { getSession } from "network/api";
-import Top from "components/comment/top";
-import BAside from "components/content/b_aside";
+
 export default {
   //import引入的组件需要注入到对象中才能使用
-  name: "container",
-  components: {
-    Top,
-    BAside
-  },
+  name: "carousel",
+  components: {},
   data() {
     //这里存放数据
     return {};
@@ -40,16 +28,7 @@ export default {
   //方法集合
   methods: {},
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {
-    getSession().then(data => {
-      if (!data.data) {
-        sessionStorage.clear();
-        this.$router.push("/");
-      } else {
-        sessionStorage.setItem('user', "SUCCESS")
-      }
-    });
-  },
+  created() {},
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -61,21 +40,20 @@ export default {
   activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
-<style>
-.el-header,
-.el-footer {
-  background-color: #b3c0d1;
-  color: #333;
-  line-height: 60px;
-  font-size: 12px;
+<style scoped>
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
 }
-.el-header {
-  text-align: right;
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
 }
-.el-footer {
-  text-align: center;
-}
-.el-container {
-  border: 2px solid #eee;
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
 }
 </style>

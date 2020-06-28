@@ -8,7 +8,7 @@
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
 import vueQuill from "components/comment/Vue-Quill";
-import { addRelease, updateRelease } from "network/home";
+import { addRelease, updateRelease } from "network/api";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -42,6 +42,8 @@ export default {
             });
             // 关闭当前对话框
             this.$emit("addOrEditRelease");
+            // 更新数据
+            this.$emit("updateDate");
           } else {
             this.$message.error("编辑失败")
           }
@@ -56,6 +58,8 @@ export default {
             });
             // 关闭当前对话框
             this.$emit("addOrEditRelease");
+            // 更新数据
+            this.$emit("updateDate");
           } else {
             this.$message.error("新增失败")
           }

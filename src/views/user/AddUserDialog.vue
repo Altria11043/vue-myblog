@@ -30,7 +30,6 @@
         <el-form-item label="备注" prop="userName">
           <el-input v-model="form.comment" autocomplete="off"></el-input>
         </el-form-item>
-        
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -43,7 +42,7 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import { addUser } from "network/home";
+import { addUser } from "network/api";
 import updataImg from "components/comment/updateImg";
 
 export default {
@@ -53,7 +52,7 @@ export default {
     updataImg
   },
   data() {
-    //这里存放数据
+    //校验数据
     var validateName = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入用户名"));
@@ -101,7 +100,15 @@ export default {
     };
     return {
       dialogFormVisible: false,
-      form: {},
+      form: {
+        photo: "",
+        userName: "",
+        password: "",
+        confirmPwd: "",
+        email: "",
+        phone: "",
+        comment: ""
+      },
       formLabelWidth: "80px",
       rules: {
         userName: [{ validator: validateName, trigger: "blur" }],
@@ -123,7 +130,17 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           // this.getUpdateImgUrl();
-          addUser(this.form).then(data => {
+          let form = {
+            photo: "",
+            userName: "",
+            password: "",
+            email: "",
+            phone: "",
+            comment: ""
+          };
+          form = this.form;
+          addUser(form).then(data => {
+            console.log("打印响应的数据", data);
             if (data.data === 1) {
               this.$message({
                 message: "添加成功",
@@ -131,7 +148,15 @@ export default {
               });
               // 关闭弹窗, 并触发页面刷新
               this.dialogFormVisible = false;
-              this.form = {};
+              this.form = {
+                photo: "",
+                userName: "",
+                password: "",
+                confirmPwd: "",
+                email: "",
+                phone: "",
+                comment: ""
+              };
               console.log("添加结束");
               this.$parent.getUserLists();
             } else {
@@ -144,7 +169,7 @@ export default {
     // 展开添加对话框
     displayDialog() {
       this.dialogFormVisible = true;
-    },
+    }
     // 获取到上传的头像地址
     // getUpdateImgUrl() {
     //   this.form.photo = this.$refs.updataImg.getUpdateImgUrl();

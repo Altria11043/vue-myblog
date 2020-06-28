@@ -15,6 +15,22 @@
           <i class="el-icon-s-order"></i>
           <span>文章</span>
         </el-menu-item>
+        <el-menu-item index="4" @click="routclick('/game')">
+          <i class="el-icon-s-platform"></i>
+          <span>游戏</span>
+        </el-menu-item>
+        <el-menu-item index="5">
+          <i class="el-icon-picture-outline"></i>
+          <span>画集</span>
+        </el-menu-item>
+        <el-menu-item index="6">
+          <i class="el-icon-bell"></i>
+          <span>通知</span>
+        </el-menu-item>
+        <el-menu-item index="7">
+          <i class="el-icon-s-comment"></i>
+          <span>留言板</span>
+        </el-menu-item>
         <!-- <el-menu-item index="4" @click="routclick('/updateImg')">
           <i class="el-icon-s-order"></i>
           <span>上传图片</span>

@@ -47,8 +47,8 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import { getUserByid, updateById } from "network/home";
 import updataImg from "components/comment/updateImg";
+import { getUserByid, updateById } from "network/api";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -57,7 +57,7 @@ export default {
     updataImg
   },
   data() {
-    //这里存放数据
+    //校验数据
     var validateName = (rule, value, callback) => {
       console.log(value);
       if (value === "") {
@@ -105,9 +105,10 @@ export default {
     // 通过ID查询数据
     getUser(id) {
       this.dialogFormVisible = true;
-      console.log("请求数据");
-      getUserByid(id)
+      let d = {id}
+      getUserByid(d)
         .then(data => {
+          console.log("请求数据: ", data);
           this.form = data.data;
         })
         .catch(err => {
@@ -128,7 +129,7 @@ export default {
               this.dialogFormVisible = false;
               this.form = {};
               console.log("提交表单结束");
-              this.$parent.getUserLists();
+              this.$emit("getUserLists");
             } else {
               this.$message.error("更新失败");
             }
