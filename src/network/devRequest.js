@@ -20,7 +20,7 @@ service.interceptors.request.use(config => {
   //  config.headers = {
   //    'Content-Type':'application/x-www-form-urlencoded'
   //  }
-   console.log("请求拦截器打印: ", config)
+  //  console.log("请求拦截器打印: ", config)
   return config
 }, error => {
   Promise.reject(error)
@@ -28,6 +28,7 @@ service.interceptors.request.use(config => {
 // 3.响应拦截器
 service.interceptors.response.use(response => {
   //接收到响应数据并成功后的一些共有的处理，关闭loading等
+  // console.log("响应数据: ", response)
   return response.data
 }, error => {
    /***** 接收到异常响应的处理开始 *****/

@@ -10,7 +10,7 @@
         <el-main>
           <slot></slot>
         </el-main>
-        <el-footer>页脚</el-footer>
+        <!-- <el-footer>页脚</el-footer> -->
       </el-container>
     </el-container>
   </div>
@@ -64,7 +64,7 @@ export default {
 <style>
 .el-header,
 .el-footer {
-  background-color: #b3c0d1;
+  background-color: #545c64;
   color: #333;
   line-height: 60px;
   font-size: 12px;
@@ -75,7 +75,7 @@ export default {
 .el-footer {
   text-align: center;
 }
-.el-container {
+/* .el-container {
   border: 2px solid #eee;
-}
+} */
 </style>

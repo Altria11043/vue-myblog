@@ -6,9 +6,10 @@ const Login = () => import('views/login/login')
 const Home = () => import('views/home/Home')
 const User = () => import('views/user/User')
 const Release = () => import('views/release/Release')
-const UpdateImg = () => import('components/comment/updateImg')
 const Index = () => import('views/homePage/index.vue')
-const Game = () => import('views/game/Game.vue')
+const Game = () => import('views/game/Game')
+const GameReleaseIDE = () => import('views/game/gameReleaseIDE/gameReleaseIDE')
+const GameClass = () => import('views/game/gameClass/GameClass')
 
 Vue.use(VueRouter)
 
@@ -39,17 +40,10 @@ const routes = [
     }
   },
   {
-    path: '/release/:id',
+    path: '/release',
     component: Release,
     meta: {
       title: '个人博客后台管理-发布文章'
-    }
-  },
-  {
-    path: '/updateImg',
-    component: UpdateImg,
-    meta: {
-      title: '个人博客后台管理-图片上传'
     }
   },
   {
@@ -57,6 +51,20 @@ const routes = [
     component: Game,
     meta: {
       title: '个人博客后台管理-游戏'
+    }
+  },
+  {
+    path: '/gameReleaseIDE',
+    component: GameReleaseIDE,
+    meta: {
+      title: '个人博客后台管理-游戏文章编辑'
+    }
+  },
+  {
+    path: '/GameClass',
+    component: GameClass,
+    meta: {
+      title: '个人博客后台管理-游戏分类'
     }
   },
   {

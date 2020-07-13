@@ -31,7 +31,7 @@
       </el-form>
       <el-divider></el-divider>
       <el-button @click="addUser" type="primary">添加</el-button>
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%">
         <el-table-column label="用户ID" width="90">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.id }}</span>

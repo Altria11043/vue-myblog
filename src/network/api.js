@@ -85,3 +85,44 @@ export function clearSession() {
 export function getOSSPolicy() {
   return http.get('/myblog/oss')
 }
+
+// 游戏文章
+// 添加游戏文章
+export function addGameRelease(data) {
+  return http.post('/game/addGameRelease', data)
+}
+export function updateGameRelease(data) {
+  return http.post('/game/updateGameRelease', data)
+}
+export function getGameReleaseList() {
+  return http.get('/game/getGameReleaseList')
+}
+export function getGameRelease(id) {
+  return http.get('/game/getGameRelease', id)
+}
+
+// 游戏分类
+// 查询到未停用的游戏分类
+export function getGameClassList() {
+  return http.get('/gameclass/getGameClassList')
+}
+// 获取到所有游戏分类
+export function getGameClassAll(data) {
+  return http.get('/gameclass/getGameClassAll', data)
+}
+// 添加游戏分类
+export function addGameClass(data) {
+  return http.post('/gameclass/addGameClass', data)
+}
+// 修改游戏状态
+export function updataGameClass(data) {
+  return http.post('/gameclass/updataGameClass', data)
+}
+// 删除游戏分类
+export function deleteGameClass(id) {
+  return http.post('/gameclass/deleteGameClass', id)
+}
+// 修改分类状态
+export function updateGameClassState(data) {
+  return http.post('/gameclass/updateGameClassState', data)
+}

@@ -31,20 +31,20 @@
 
     <el-button type="primary" @click="handleAdd">添加</el-button>
     <!-- 使用卡片会导致布局无法自适应, 这里改用表格展示 -->
-    <el-table :data="data" style="width: 100%">
-      <el-table-column label="文章ID" width="180">
+    <el-table :data="data" border style="width: 100%">
+      <el-table-column label="文章ID" width="80">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="标题" width="180">
+      <el-table-column label="标题" width="280" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <el-link type="primary" @click.native="viewArticle(scope.row.id)">{{ scope.row.title }}</el-link>
           <!-- <span style="margin-left: 10px"></span> -->
         </template>
       </el-table-column>
 
-      <el-table-column label="标签" width="480">
+      <el-table-column label="标签" width="380" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <el-tag v-for="tag in scope.row.listTag" :key="tag">{{ tag }}</el-tag>
         </template>
@@ -77,7 +77,7 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import { getReleaseTable, updataState } from "network/api";
+import { getReleaseTable, updataState, getRelease } from "network/api";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -99,6 +99,12 @@ export default {
         content: "",
         startDate: null,
         endDate: null
+      },
+      // 预览所需的数据
+      content: {
+        listTag: [],
+        content: "",
+        title: ""
       }
     };
   },
@@ -113,6 +119,18 @@ export default {
       getReleaseTable(content).then(data => {
         this.data = data.data;
       });
+    },
+    // 返回文章数据
+    getRelease(id) {
+      var d = { id };
+      getRelease(d).then(data => {
+        this.content = data.data;
+        this.$emit("releasePreview", this.content);
+      });
+    },
+    // 点击这里打开父组件的对话框
+    viewArticle(id) {
+      this.getRelease(id);
     },
     // 添加文章
     handleAdd() {

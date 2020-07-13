@@ -4,7 +4,7 @@
       class="avatar-uploader"
       action="http://myblog-altria.oss-cn-shenzhen.aliyuncs.com"
       :data="dataObj"
-      list-type="picture"
+      list-type="picture-card"
       :multiple="false"
       :show-file-list="showFileList"
       :file-list="fileList"
@@ -14,14 +14,14 @@
       :on-preview="handlePreview"
       :on-error="uploadError"
     >
-      <img v-if="image" :src="image" class="avatar" />
-      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      <!-- <img v-if="image" :src="image" class="avatar" /> -->
+      <i class="el-icon-plus"></i>
       <!-- <el-button size="small" type="primary">点击上传</el-button>
       <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过10MB</div>-->
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible">
+    <!-- <el-dialog :visible.sync="dialogVisible">
       <img width="100%" :src="fileList[0].url" alt />
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 <script>
@@ -79,9 +79,9 @@ export default {
     };
   },
   methods: {
-    emitInput(val) {
-      this.$emit("input", val);
-    },
+    // emitInput(val) {
+    //   this.$emit("input", val);
+    // },
     handleRemove() {
       this.dialogVisible = true;
     },
@@ -89,12 +89,29 @@ export default {
       this.dialogVisible = true;
     },
     beforeUpload(file) {
-      console.log(file);
+      // console.log(file);
+      // 文件类型:  image/png
+      // 文件大小:  774670
+      // 文件类型:  image/jpeg
+      // 文件大小:  137191
+      // 文件类型:  image/jpeg
+      // 文件大小:  336993
+      // 先判断文件大小和文件类型
+      if (file.type != 'image/png' && file.type != 'image/jpeg') {
+        this.$message("图片格式不对")
+        return false;
+      }
+      if (file.size > 5242880) {
+        this.$message("图片大于5M")
+        return false;
+      }
+      console.log("文件类型: ", );
+      console.log("文件大小: ", file.size);
       let _self = this;
       return new Promise((resolve, reject) => {
         getOSSPolicy()
           .then(response => {
-            console.log("响应的数据: ", response);
+            // console.log("响应的数据: ", response);
             _self.dataObj.policy = response.data.policy;
             _self.dataObj.signature = response.data.signature;
             _self.dataObj.ossaccessKeyId = response.data.accessid;
@@ -119,28 +136,37 @@ export default {
           "/" +
           this.dataObj.key.replace("${filename}", file.name)
       });
-      this.emitInput(this.fileList[0].url);
+      // this.emitInput(this.fileList[0].url);
       this.image = this.fileList[0].url;
+      this.$emit("getImage", this.image);
       console.log(this.image);
     },
     uploadError(err) {
       this.$message.error("图片上传失败");
       this.quillUpdateImg = false;
       console.log(err);
+    },
+    getImage() {
+      setTimeout(() => {
+        this.image = this.fileList[0].url;
+      }, 400);
     }
-    // getUpdateImgUrl() {
-    //   return this.image;
-    // }
+  },
+  mounted() {
+    this.getImage();
   }
 };
 </script>
 <style>
 .avatar-uploader-icon {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  border-color: #8c939d;
   font-size: 28px;
-  color: #8c939d;
-  width: 178px;
+  color: #718299;
+  /* width: 178px;
   height: 178px;
-  line-height: 178px;
+  line-height: 178px; */
   text-align: center;
 }
 .avatar {
@@ -148,8 +174,8 @@ export default {
   height: 178px;
   display: block;
 }
-.avatar-uploader .el-upload:hover {
-  border: 1px dashed #d9d9d9;
+.avatar-uploader-icon:hover {
+  border: 2px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
   position: relative;

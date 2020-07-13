@@ -10,7 +10,8 @@
       <el-form :model="form" :label-width="formLabelWidth" status-icon :rules="rules" ref="form">
         <el-form-item label="头像" prop="photo">
           <!-- <el-input v-model="form.photo" autocomplete="off"></el-input> -->
-          <updataImg ref="updataImg" v-model="form.photo"></updataImg>
+          <!-- 接收子组件的数据 -->
+          <updataImg ref="updataImg" v-model="form.photo" @getImage="getImage"></updataImg>
         </el-form-item>
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="form.userName" autocomplete="off"></el-input>
@@ -43,7 +44,7 @@
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
 import { addUser } from "network/api";
-import updataImg from "components/comment/updateImg";
+import updataImg from "components/comment/singleUpload";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -169,6 +170,9 @@ export default {
     // 展开添加对话框
     displayDialog() {
       this.dialogFormVisible = true;
+    },
+    getImage(data) {
+      this.form.photo = data;
     }
     // 获取到上传的头像地址
     // getUpdateImgUrl() {

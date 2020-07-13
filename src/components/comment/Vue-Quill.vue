@@ -1,57 +1,20 @@
-<!-- quill -->
+<!-- quill
+  这是一个富文本编辑器的组件集合
+  掺杂了多余的不必要的组件和关联
+  富文本编辑器, 图片上传 应该单独独立出来(图片上传与富文本编辑器整合在一起了)
+  富文本编辑器单独提供set和get方法
+ -->
 <template>
   <div class="vue-quill">
-    <el-form ref="data" :model="data">
-      <!-- 富文本编辑器 -->
-      <el-form-item>
-        <el-input placeholder="标题" v-model="data.title" clearable></el-input>
-      </el-form-item>
-      <el-row v-loading="quillUpdateImg">
-        <!--           @focus="onEditorFocus($event)"
-          @blur="onEditorBlur($event)"
-        @change="onEditorChange($event)"-->
-        <quillEditor
-          class="quill-editor"
-          ref="myQuillEditor"
-          v-model="data.content"
-          :options="editorOption"
-        ></quillEditor>
-      </el-row>
-      <br />
-      <br />
-      <br />
-      <br />
-      <el-form-item>
-        <el-tag
-          :key="tag"
-          v-for="tag in data.listTag"
-          closable
-          :disable-transitions="false"
-          @close="handleClose(tag)"
-        >{{tag}}</el-tag>
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        ></el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-switch
-          v-model="data.state"
-          active-color="#ff4949"
-          inactive-color="#13ce66"
-          active-text="私有"
-          inactive-text="公开"
-          :active-value="1"
-          :inactive-value="2"
-        ></el-switch>
-      </el-form-item>
-    </el-form>
+    <!-- 富文本编辑器 -->
+    <el-row v-loading="quillUpdateImg">
+      <quillEditor
+        class="quill-editor"
+        ref="myQuillEditor"
+        v-model="content"
+        :options="editorOption"
+      ></quillEditor>
+    </el-row>
     <!-- 图片上传 -->
     <!-- :file-list="fileList" -->
     <el-upload
@@ -65,7 +28,6 @@
     ></el-upload>
   </div>
 </template>
-
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
@@ -75,7 +37,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import toolbarOptions from "assets/js/QuillComment.js";
 import { getUUID } from "assets/js/QuillComment";
-import { getOSSPolicy, getRelease } from "network/api";
+import { getOSSPolicy } from "network/api";
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -85,16 +47,7 @@ export default {
     //这里存放数据
     return {
       quillUpdateImg: false,
-      value: 1,
-      inputVisible: false,
-      inputValue: "",
-      data: {
-        listTag: [],
-        state: 1,
-        content: "",
-        title: "",
-        id: ""
-      },
+      content: "",
       editorOption: {
         placeholder: "",
         theme: "snow", // or 'bubble'
@@ -131,55 +84,18 @@ export default {
   //方法集合
   methods: {
     // 富文本相关方法
-    // onEditorFocus() {
-    //   console.log("获得焦点事件");
-    // },
-    // onEditorBlur() {
-    //   console.log("失去焦点事件");
-    // },
-    // onEditorChange() {
-    //   console.log("内容改变事件");
-    // },
-    // 编辑时, 读取数据
-    getReleaseData(id) {
-      let d = {id}
-      getRelease(d).then(data => {
-        this.data.title = data.data.title;
-        this.data.state = data.data.state;
-        this.data.content = data.data.content;
-        this.data.listTag = data.data.ctag.split(";");
-        this.data.id = id;
-      });
-    },
     // 清除数据
-    clearReleaseData() {
-      this.data.listTag = [];
-      this.data.state = 1;
-      this.data.content = "";
-      this.data.title = "";
-      this.data.id = "";
+    clearQuillData() {
+      this.content = "";
     },
     // 将数据传递给父组件, 由父组件提交数据
-    sumData() {
-      return this.data;
+    getQuillData() {
+      return this.content;
     },
-    // 标签相关方法
-    handleClose(tag) {
-      this.data.listTag.splice(this.data.listTag.indexOf(tag), 1);
-    },
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(() => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
-    },
-    handleInputConfirm() {
-      let inputValue = this.inputValue;
-      if (inputValue) {
-        this.data.listTag.push(inputValue);
-      }
-      this.inputVisible = false;
-      this.inputValue = "";
+    // 放入数据
+    setQuillData(data) {
+      // console.log("放入数据: ", data)
+      this.content = data;
     },
     // 图片相关
     uploadSuccess(res, file) {
@@ -249,20 +165,5 @@ export default {
 <style scoped>
 .quill-editor {
   height: 500px;
-}
-.el-tag + .el-tag {
-  margin-left: 10px;
-}
-.button-new-tag {
-  margin-left: 10px;
-  height: 32px;
-  line-height: 30px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-.input-new-tag {
-  width: 90px;
-  margin-left: 10px;
-  vertical-align: bottom;
 }
 </style>
